@@ -28,7 +28,7 @@ export default class Ewent {
         this.origin = options.origin;
         this.window = $target;
         this.callbacks = {};
-        this.register();
+        this[register]();
     }
 
     on(type, fn, feedback) {
@@ -74,7 +74,7 @@ export default class Ewent {
                 global.removeEventListener('message', callback);
             });
         });
-        this.unregister();
+        this[unregister]();
     }
 
     fire(type, msg) {
