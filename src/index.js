@@ -3,6 +3,10 @@
  * @author o.o@mug.dog
  */
 
+const register = Symbol('register');
+const unregister = Symbol('unregister');
+const instanceMap = Symbol('instanceMap');
+
 export default class Ewent {
 
     constructor(
@@ -82,31 +86,31 @@ export default class Ewent {
         return this;
     }
 
-    register() {
-        Ewent.addInstance(this.id, this);
+    [register]() {
+        Ewent[register](this.id, this);
     }
 
-    unregister() {
-        Ewent.removeInstance(this.id);
+    [unregister]() {
+        Ewent[unregister](this.id);
     }
 
 }
 
-Ewent.instanceMap = {};
+Ewent[instanceMap] = {};
 
-Ewent.getInstance = function (id = 'default') {
-    return Ewent.instanceMap[id];
-};
-
-Ewent.addInstance = function (id, Ewent) {
-    const instance = Ewent.instanceMap[id];
+Ewent[register] = function (id, Ewent) {
+    const instance = Ewent[instanceMap][id];
     if (instance && Ewent !== instance) {
         throw Error(`Target Ewent instance "${id}" is already exists.`
             + 'Please change the id in options of constructor if nessecery.');
     }
-    Ewent.instanceMap[id] = Ewent;
+    Ewent[instanceMap][id] = Ewent;
 };
 
-Ewent.removeInstance = function (id = 'default') {
-    delete Ewent.instanceMap[id];
+Ewent[unregister] = function (id = 'default') {
+    delete Ewent[instanceMap][id];
+};
+
+Ewent.getInstance = function (id = 'default') {
+    return Ewent[instanceMap][id];
 };
